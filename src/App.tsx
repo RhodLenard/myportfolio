@@ -36,5 +36,5 @@ export default function App() {
     return () => document.removeEventListener('click', handleAnchorClick)
   }, [])
 
-  return <><Background /><Loader onComplete={handleReady} /><Navbar /><main><Hero ready={ready} /><About /><Projects /><Skills /><More /><Contact /></main><Footer /></>
+  return <><Background effect="dots" /><Loader onComplete={handleReady} /><Navbar /><main><Hero ready={ready} /><About /><Projects /><Skills /><More /><Contact /></main><Footer /></>
 }

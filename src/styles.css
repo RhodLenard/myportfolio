@@ -49,6 +49,12 @@ section { padding: 88px 0; }
 .bg__orb--1 { top: 8%; right: 6%; width: 340px; height: 340px; }
 .bg__orb--2 { bottom: 6%; left: 4%; width: 280px; height: 280px; background: var(--accent-soft); opacity: .25; animation-delay: -7s; }
 .bg__glow { position: absolute; inset: 0; background: radial-gradient(360px circle at var(--mx) var(--my), color-mix(in srgb, var(--accent) 16%, transparent), transparent 70%); }
+.bg__canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.bg__glow, .bg__dots { transition: opacity .3s; }
+body:not(.fx-glow) .bg__glow { opacity: 0; }
+body.fx-dots .bg__dots, body.fx-spotlight .bg__dots { opacity: 0; }
+body.fx-parallax .bg__orb, body.fx-parallax .bg__ring { translate: calc(var(--px, 0) * -40px) calc(var(--py, 0) * -40px); transition: translate .4s ease-out; }
+body.fx-parallax .bg__ring--3 { translate: calc(var(--px, 0) * -14px) calc(var(--py, 0) * -14px); }
 @keyframes bg-breathe { 50% { transform: translate(-50%, -50%) scale(1.04); } }
 @keyframes bg-drift { to { transform: translate(-50px, 40px) scale(1.15); } }
 
@@ -244,4 +250,6 @@ footer { scroll-margin-top: 80px; padding: 28px 0 calc(28px + env(safe-area-inse
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
   .hero__name > span:not(.hero__space) { opacity: 1; transform: none; }
   .bg__ring, .bg__orb { animation: none !important; }
+  .bg__canvas { display: none; }
+  body.fx-dots .bg__dots, body.fx-spotlight .bg__dots { opacity: .62; }
 }
