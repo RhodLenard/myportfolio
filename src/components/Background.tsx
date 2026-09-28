@@ -1,17 +1,14 @@
 import { useEffect, useRef } from 'react'
 
-export type BackgroundEffect = 'glow' | 'dots' | 'spotlight' | 'parallax' | 'trail' | 'ripple'
+type ConstellationNode = {
+  x: number
+  y: number
+  velocityX: number
+  velocityY: number
+}
 
-type Particle = { x: number; y: number; life: number }
-type Ripple = { x: number; y: number; radius: number; opacity: number }
-
-export function Background({ effect = 'dots' }: { effect?: BackgroundEffect }) {
+export function Background() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-
-  useEffect(() => {
-    document.body.classList.add(`fx-${effect}`)
-    return () => document.body.classList.remove(`fx-${effect}`)
-  }, [effect])
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -19,6 +16,8 @@ export function Background({ effect = 'dots' }: { effect?: BackgroundEffect }) {
     if (!canvas || !context) return
 
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (reducedMotion) return
+
     const root = document.documentElement
     const pointer = { x: -999, y: -999 }
     const smoothPointer = { x: -999, y: -999 }
@@ -27,8 +26,17 @@ export function Background({ effect = 'dots' }: { effect?: BackgroundEffect }) {
     let height = 0
     let frame = 0
     let animationFrame = 0
-    let particles: Particle[] = []
-    let ripples: Ripple[] = []
+    let nodes: ConstellationNode[] = []
+
+    const createNodes = () => {
+      const count = Math.min(110, Math.round((width * height) / 16000))
+      nodes = Array.from({ length: count }, () => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        velocityX: (Math.random() - 0.5) * 0.5,
+        velocityY: (Math.random() - 0.5) * 0.5,
+      }))
+    }
 
     const resize = () => {
       const pixelRatio = window.devicePixelRatio || 1
@@ -37,30 +45,17 @@ export function Background({ effect = 'dots' }: { effect?: BackgroundEffect }) {
       canvas.width = width * pixelRatio
       canvas.height = height * pixelRatio
       context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0)
+      createNodes()
     }
 
     const handlePointerMove = (event: PointerEvent) => {
       pointer.x = event.clientX
       pointer.y = event.clientY
-      root.style.setProperty('--mx', `${event.clientX}px`)
-      root.style.setProperty('--my', `${event.clientY}px`)
-      root.style.setProperty('--px', String((event.clientX / width - 0.5) * 2))
-      root.style.setProperty('--py', String((event.clientY / height - 0.5) * 2))
-
-      if (effect === 'trail' && !reducedMotion) {
-        particles.push({ x: event.clientX, y: event.clientY, life: 1 })
-      }
     }
 
-    const handlePointerDown = (event: PointerEvent) => {
-      if (effect === 'ripple' && !reducedMotion) {
-        ripples.push({ x: event.clientX, y: event.clientY, radius: 4, opacity: 1 })
-      }
-    }
-
-    const circle = (x: number, y: number, radius: number) => {
-      context.beginPath()
-      context.arc(x, y, radius, 0, Math.PI * 2)
+    const handlePointerLeave = () => {
+      pointer.x = -999
+      pointer.y = -999
     }
 
     const draw = () => {
@@ -70,65 +65,54 @@ export function Background({ effect = 'dots' }: { effect?: BackgroundEffect }) {
         colors.muted = styles.getPropertyValue('--muted').trim() || colors.muted
       }
 
+      smoothPointer.x += (pointer.x - smoothPointer.x) * 0.18
+      smoothPointer.y += (pointer.y - smoothPointer.y) * 0.18
       context.clearRect(0, 0, width, height)
+      context.lineWidth = 1
 
-      if (!reducedMotion) {
-        smoothPointer.x += (pointer.x - smoothPointer.x) * 0.18
-        smoothPointer.y += (pointer.y - smoothPointer.y) * 0.18
+      nodes.forEach((node, index) => {
+        node.x += node.velocityX
+        node.y += node.velocityY
 
-        if (effect === 'dots' || effect === 'spotlight') {
-          const gap = 28
-          const influenceRadius = effect === 'dots' ? 150 : 220
+        if (node.x < 0 || node.x > width) node.velocityX *= -1
+        if (node.y < 0 || node.y > height) node.velocityY *= -1
 
-          for (let y = gap / 2; y < height; y += gap) {
-            for (let x = gap / 2; x < width; x += gap) {
-              const deltaX = x - smoothPointer.x
-              const deltaY = y - smoothPointer.y
-              const distance = Math.hypot(deltaX, deltaY)
-              const influence = Math.max(0, 1 - distance / influenceRadius)
-
-              if (effect === 'dots') {
-                const push = influence * influence * 16
-                const dotX = distance ? x + (deltaX / distance) * push : x
-                const dotY = distance ? y + (deltaY / distance) * push : y
-                context.globalAlpha = 0.28 + influence * 0.7
-                context.fillStyle = influence > 0.05 ? colors.accent : colors.muted
-                circle(dotX, dotY, 1.1 + influence * 3)
-                context.fill()
-              } else if (influence > 0) {
-                context.globalAlpha = influence * 0.9
-                context.fillStyle = colors.accent
-                circle(x, y, 1.3 + influence * 1.2)
-                context.fill()
-              }
-            }
-          }
+        const pointerX = smoothPointer.x - node.x
+        const pointerY = smoothPointer.y - node.y
+        const pointerDistance = Math.hypot(pointerX, pointerY)
+        if (pointerDistance < 200 && pointerDistance > 1) {
+          node.x += (pointerX / pointerDistance) * 0.35
+          node.y += (pointerY / pointerDistance) * 0.35
         }
 
-        if (effect === 'trail') {
-          particles = particles.filter((particle) => particle.life > 0)
-          for (const particle of particles) {
-            particle.life -= 0.025
-            context.globalAlpha = Math.max(0, particle.life) * 0.6
-            context.fillStyle = colors.accent
-            circle(particle.x, particle.y, 2 + particle.life * 7)
-            context.fill()
-          }
-        }
-
-        if (effect === 'ripple') {
-          ripples = ripples.filter((ripple) => ripple.opacity > 0)
-          for (const ripple of ripples) {
-            ripple.radius += 3.2
-            ripple.opacity -= 0.016
-            context.globalAlpha = Math.max(0, ripple.opacity)
-            context.strokeStyle = colors.accent
-            context.lineWidth = 2
-            circle(ripple.x, ripple.y, ripple.radius)
+        for (let nextIndex = index + 1; nextIndex < nodes.length; nextIndex += 1) {
+          const nextNode = nodes[nextIndex]
+          const distance = Math.hypot(node.x - nextNode.x, node.y - nextNode.y)
+          if (distance < 130) {
+            context.globalAlpha = (1 - distance / 130) * 0.35
+            context.strokeStyle = colors.muted
+            context.beginPath()
+            context.moveTo(node.x, node.y)
+            context.lineTo(nextNode.x, nextNode.y)
             context.stroke()
           }
         }
-      }
+
+        if (pointerDistance < 190) {
+          context.globalAlpha = (1 - pointerDistance / 190) * 0.85
+          context.strokeStyle = colors.accent
+          context.beginPath()
+          context.moveTo(node.x, node.y)
+          context.lineTo(smoothPointer.x, smoothPointer.y)
+          context.stroke()
+        }
+
+        context.globalAlpha = 0.55
+        context.fillStyle = pointerDistance < 190 ? colors.accent : colors.muted
+        context.beginPath()
+        context.arc(node.x, node.y, 2, 0, Math.PI * 2)
+        context.fill()
+      })
 
       context.globalAlpha = 1
       animationFrame = window.requestAnimationFrame(draw)
@@ -137,24 +121,19 @@ export function Background({ effect = 'dots' }: { effect?: BackgroundEffect }) {
     resize()
     window.addEventListener('resize', resize)
     window.addEventListener('pointermove', handlePointerMove, { passive: true })
-    window.addEventListener('pointerdown', handlePointerDown)
+    document.documentElement.addEventListener('pointerleave', handlePointerLeave)
     draw()
 
     return () => {
       window.cancelAnimationFrame(animationFrame)
       window.removeEventListener('resize', resize)
       window.removeEventListener('pointermove', handlePointerMove)
-      window.removeEventListener('pointerdown', handlePointerDown)
-      root.style.removeProperty('--mx')
-      root.style.removeProperty('--my')
-      root.style.removeProperty('--px')
-      root.style.removeProperty('--py')
+      document.documentElement.removeEventListener('pointerleave', handlePointerLeave)
     }
-  }, [effect])
+  }, [])
 
   return (
     <div className="bg" aria-hidden="true">
-      <div className="bg__glow" />
       <i className="bg__orb bg__orb--1" />
       <i className="bg__orb bg__orb--2" />
       <div className="bg__dots" />

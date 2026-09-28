@@ -6,6 +6,7 @@ import { Footer } from './components/Footer'
 import { Hero } from './components/Hero'
 import { Loader } from './components/Loader'
 import { More } from './components/More'
+import { MotionPolish } from './components/MotionPolish'
 import { Navbar } from './components/Navbar'
 import { Projects } from './components/Projects'
 import { Skills } from './components/Skills'
@@ -36,5 +37,5 @@ export default function App() {
     return () => document.removeEventListener('click', handleAnchorClick)
   }, [])
 
-  return <><Background effect="dots" /><Loader onComplete={handleReady} /><Navbar /><main><Hero ready={ready} /><About /><Projects /><Skills /><More /><Contact /></main><Footer /></>
+  return <><Background /><MotionPolish /><Loader onComplete={handleReady} /><Navbar /><main><Hero ready={ready} /><About /><Projects /><Skills /><More /><Contact /></main><Footer /></>
 }

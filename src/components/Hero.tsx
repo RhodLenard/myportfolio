@@ -1,12 +1,59 @@
-import { FormEvent, useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 import { answers, fallbackAnswer } from '../data/answers'
 import { site } from '../data/site'
 
 type HeroProps = { ready: boolean }
 
+const roles = ['Web Developer', 'Frontend Developer', 'Mobile Developer'] as const
+const decodeCharacters = 'abcdefghijklmnopqrstuvwxyz<>/{}_-'
+
+function useDecodedRole(ready: boolean) {
+  const [role, setRole] = useState<string>(roles[0])
+
+  useEffect(() => {
+    if (!ready || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+    let roleIndex = 0
+    let decodeTimer = 0
+
+    const decode = (nextRole: string) => {
+      let frame = 0
+      const totalFrames = 22
+      window.clearInterval(decodeTimer)
+      decodeTimer = window.setInterval(() => {
+        frame += 1
+        const revealedCharacters = (frame / totalFrames) * nextRole.length
+        const decoded = Array.from(nextRole, (character, index) => {
+          if (character === ' ' || index < revealedCharacters) return character
+          return decodeCharacters[Math.floor(Math.random() * decodeCharacters.length)]
+        }).join('')
+        setRole(decoded)
+
+        if (frame >= totalFrames) {
+          window.clearInterval(decodeTimer)
+          setRole(nextRole)
+        }
+      }, 30)
+    }
+
+    const cycleTimer = window.setInterval(() => {
+      roleIndex = (roleIndex + 1) % roles.length
+      decode(roles[roleIndex])
+    }, 3400)
+
+    return () => {
+      window.clearInterval(cycleTimer)
+      window.clearInterval(decodeTimer)
+    }
+  }, [ready])
+
+  return role
+}
+
 export function Hero({ ready }: HeroProps) {
   const [question, setQuestion] = useState('')
   const [reply, setReply] = useState('')
+  const decodedRole = useDecodedRole(ready)
 
   function ask(event: FormEvent) {
     event.preventDefault()
@@ -27,7 +74,10 @@ export function Hero({ ready }: HeroProps) {
             ? <span className="hero__space" key={index} />
             : <span key={`${letter}-${index}`} style={{ animationDelay: `${index * 70}ms` }}>{letter}</span>)}
         </h1>
-        <p className="hero__role">{site.role}</p>
+        <p className="hero__role">
+          <span className="sr-only">Web, frontend, and mobile developer</span>
+          <span aria-hidden="true">{decodedRole}</span>
+        </p>
         <div className="ask">
           <form className="ask__box" onSubmit={ask}>
             <label className="sr-only" htmlFor="ask-input">Ask a question about {site.name}</label>
