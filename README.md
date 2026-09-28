@@ -22,7 +22,7 @@ npm run preview
 All portfolio copy and links live in `src/data`:
 
 - `site.ts` — name, role, contact details, location/timezone, about copy, navigation, social links, and explore cards
-- `projects.ts` — project titles, descriptions, tags, links, and preview colors
+- `projects.ts` — project titles, descriptions, tags, links, preview colors, and optional `livePreview` URLs for embeddable live website previews
 - `skills.ts` — skill pills
 - `answers.ts` — hero question keywords, responses, and section destinations
 

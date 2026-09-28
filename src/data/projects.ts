@@ -5,12 +5,23 @@ export type Project = {
   tags: string[]
   link: string
   linkLabel: string
+  livePreview?: string
   colors: [string, string]
 }
 
 const sourceProjectLink = 'https://rhodlenard.me/#projects'
 
 export const projects: Project[] = [
+  {
+    type: 'Web Development',
+    title: 'QDCJ Business Consultancy',
+    description: 'A responsive business website for an accounting and consultancy firm, presenting professional services, industry expertise, resources, team information, and consultation options.',
+    tags: ['React', 'Vite', 'Responsive Design', 'Business Website'],
+    link: 'https://accfirm.vercel.app/',
+    linkLabel: 'View live site',
+    livePreview: 'https://accfirm.vercel.app/',
+    colors: ['#1f4e68', '#d1a85c'],
+  },
   {
     type: 'Web Development',
     title: 'AI-Powered Analytics Dashboard',
