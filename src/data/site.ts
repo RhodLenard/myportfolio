@@ -2,7 +2,7 @@ export const site = {
   name: "Rhod Lenard",
   fullName: "Rhod Lenard Villanueva",
   initials: "RL",
-  role: "Web Developer",
+  role: "Software Developer — Web & Mobile",
   email: "villanuevarhodlenard@gmail.com",
   gmailComposeUrl:
     "https://mail.google.com/mail/u/0/?extsrc=mailto&url=mailto%3Avillanuevarhodlenard%40gmail.com",

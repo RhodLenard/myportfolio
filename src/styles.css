@@ -63,7 +63,8 @@ section { padding: 88px 0; }
 
 .navbar { position: sticky; top: 0; top: env(safe-area-inset-top, 0px); z-index: 100; border-bottom: 1px solid var(--line); background: color-mix(in srgb, var(--bg) 80%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
 .navbar__inner { display: flex; height: 64px; align-items: center; justify-content: space-between; gap: 12px; }
-.logo { display: flex; align-items: center; gap: 10px; min-width: max-content; font: 500 1.1875rem 'Source Serif 4', Georgia, serif; text-decoration: none; }
+.logo { display: flex; align-items: center; min-width: max-content; font: 500 1.1875rem 'Source Serif 4', Georgia, serif; text-decoration: none; }
+.logo__image { display: block; width: 46px; height: 46px; object-fit: contain; }
 .navlinks { display: flex; gap: 4px; }
 .navlinks a { padding: 6px 14px; border-radius: 999px; color: var(--muted); font-size: .9375rem; text-decoration: none; transition: color .2s, background-color .2s; }
 .navlinks a:hover, .navlinks a.is-active { background: var(--chip); color: var(--text); }

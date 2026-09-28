@@ -19,7 +19,7 @@ export function Navbar() {
     <nav className="navbar" aria-label="Main navigation">
       <div className="wrap navbar__inner">
         <a className="logo" href="#home" aria-label={`${site.name}, home`}>
-          <span>{site.name}</span>
+          <img className="logo__image" src="/brand/rl-monogram.png" width="1254" height="1254" alt="" />
         </a>
         <div className={`navlinks${menuOpen ? ' navlinks--open' : ''}`} id="navigation-menu">
           {navigation.map((item) => (
