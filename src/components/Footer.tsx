@@ -25,7 +25,7 @@ const socialLinks = [
 
 export function Footer() {
   return (
-    <footer>
+    <footer id="social-links">
       <div className="wrap footer__inner">
         <span>© {site.year} {site.fullName}</span>
         <div className="footer__links" aria-label="Social profiles">

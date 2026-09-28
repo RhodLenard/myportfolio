@@ -80,13 +80,18 @@ export const craftTags = [
 export const exploreCards = [
   {
     title: "Guestbook",
-    text: "Leave a note and read what others wrote.",
-    href: "/guestbook",
+    text: "A place for visitors to leave notes and share feedback.",
+    status: "Coming soon",
   },
   {
     title: "Achievements",
-    text: "Milestones, certificates and awards.",
-    href: "/achievements",
+    text: "Certificates, milestones, awards, and learning progress.",
+    status: "Coming soon",
   },
-  { title: "My links", text: "Find me across the web.", href: "/links" },
-];
+  {
+    title: "My links",
+    text: "Connect with me on Facebook, Instagram, LinkedIn, and GitHub.",
+    href: "#social-links",
+    action: "View social links ↓",
+  },
+] as const;
