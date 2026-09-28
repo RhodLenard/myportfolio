@@ -8,11 +8,43 @@ export type Project = {
   colors: [string, string]
 }
 
-const sourceProjectLink = 'https://rhodlenard-portfolio.vercel.app/#projects'
+const sourceProjectLink = 'https://rhodlenard.me/#projects'
 
 export const projects: Project[] = [
-  { type: 'SaaS Platform', title: 'AI-Powered Analytics Dashboard', description: 'Real-time analytics dashboard with AI-driven insights and predictive modeling for enterprise clients.', tags: ['React', 'TypeScript', 'D3.js', 'Node.js'], link: sourceProjectLink, linkLabel: 'View original portfolio', colors: ['#d97757', '#e9a67f'] },
-  { type: 'Web3 Application', title: 'Metaverse E-Commerce', description: 'Immersive 3D shopping experience built with Three.js and blockchain integration for NFT collectibles.', tags: ['Three.js', 'Web3', 'Solidity', 'Next.js'], link: sourceProjectLink, linkLabel: 'View original portfolio', colors: ['#6b7bd9', '#a7b0f0'] },
-  { type: 'Design System', title: 'Motion Design System', description: 'Comprehensive component library with advanced animations and accessibility features for modern web apps.', tags: ['React', 'Motion', 'Storybook', 'Tailwind'], link: sourceProjectLink, linkLabel: 'View original portfolio', colors: ['#4c9b82', '#8fd0b7'] },
-  { type: 'Productivity App', title: 'Real-time Collaboration Tool', description: 'Collaborative workspace with live cursors, comments, and version control.', tags: ['WebSockets', 'React', 'Canvas API', 'Redis'], link: sourceProjectLink, linkLabel: 'View original portfolio', colors: ['#b4658f', '#e2a3c4'] },
+  {
+    type: 'Web Development',
+    title: 'AI-Powered Analytics Dashboard',
+    description: 'A responsive analytics platform that turns complex data into clear visual insights, with accessible navigation and fast client-side interactions.',
+    tags: ['React', 'TypeScript', 'D3.js', 'Responsive UI'],
+    link: sourceProjectLink,
+    linkLabel: 'View project',
+    colors: ['#d97757', '#e9a67f'],
+  },
+  {
+    type: 'Software Development',
+    title: 'Real-time Collaboration Tool',
+    description: 'A structured collaboration system with live updates, comments, persistent data, and reusable services designed for maintainability.',
+    tags: ['Node.js', 'WebSockets', 'PostgreSQL', 'REST API'],
+    link: sourceProjectLink,
+    linkLabel: 'View project',
+    colors: ['#6b7bd9', '#a7b0f0'],
+  },
+  {
+    type: 'Mobile Development',
+    title: 'Mobile Commerce Experience',
+    description: 'A cross-platform shopping experience designed for touch, simple navigation, secure account flows, and reliable performance on mobile devices.',
+    tags: ['React Native', 'Expo', 'Mobile UI', 'Firebase'],
+    link: sourceProjectLink,
+    linkLabel: 'View project',
+    colors: ['#4c9b82', '#8fd0b7'],
+  },
+  {
+    type: 'UI Engineering',
+    title: 'Motion Design System',
+    description: 'A reusable component library connecting product design with web and mobile implementation through shared patterns and accessible interactions.',
+    tags: ['React', 'Storybook', 'Motion', 'Accessibility'],
+    link: sourceProjectLink,
+    linkLabel: 'View project',
+    colors: ['#b4658f', '#e2a3c4'],
+  },
 ]

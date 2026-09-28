@@ -4,7 +4,7 @@ export function Projects() {
   return (
     <section id="projects" aria-labelledby="projects-title">
       <div className="wrap">
-        <p className="eyebrow">Portfolio</p><h2 id="projects-title">Featured projects</h2><p className="lead">A short list of projects that made me confident in building software.</p>
+        <p className="eyebrow">Portfolio</p><h2 id="projects-title">Featured projects</h2><p className="lead">Selected work across web development, software systems, mobile experiences, and interface engineering.</p>
         <div>
           {projects.map((project, index) => {
             const initials = project.title.split(' ').map((word) => word[0]).join('')

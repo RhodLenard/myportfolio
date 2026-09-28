@@ -16,33 +16,38 @@ export const site = {
   about: {
     eyebrow: "About",
     title: "Design sense, engineering habits.",
-    lead: "I’m a passionate developer who believes in pushing the boundaries of web experiences, where creativity meets technical precision.",
+    lead: "I'm a developer focused on building useful digital products across the web, software systems, and mobile experiences, where thoughtful design meets dependable engineering.",
     portraitHint: "Hover to read more",
     details: [
       {
-        title: "10+ projects",
-        text: "Completed projects spanning modern web products and immersive digital experiences.",
+        title: "Web development",
+        text: "Responsive, accessible websites and web applications built for speed, usability, and a consistent experience across browsers.",
       },
       {
-        title: "1 year",
-        text: "Experience creating polished applications that perform across devices.",
+        title: "Software development",
+        text: "Maintainable applications, APIs, databases, and business logic designed around clear structure and reliable performance.",
       },
       {
-        title: "5+ clients",
-        text: "Happy clients helped through creative design and reliable development.",
+        title: "Mobile development",
+        text: "Mobile-first and cross-platform experiences with intuitive navigation, responsive interfaces, and practical offline-friendly features.",
       },
     ],
     craft:
-      "I specialize in immersive digital experiences that look stunning and perform flawlessly, using modern frontend, backend, and cloud tooling.",
+      "I build complete digital products—from responsive interfaces and mobile experiences to backend services, databases, testing, and deployment.",
     mindset:
-      "My work sits at the intersection of design and code, combining creativity, innovation, and technical precision.",
-    hobbies: ["Design", "Innovation", "Performance"],
+      "I approach web, software, and mobile development with the same priorities: understand the problem, keep the experience simple, and write code that can grow.",
+    hobbies: ["Web", "Software", "Mobile"],
   },
   contact: {
     title: "Let’s create something amazing.",
     text: "Have a project in mind? Let’s discuss how we can bring your ideas to life with cutting-edge technology and creative design.",
   },
-  social: { github: "", linkedin: "" },
+  social: {
+    facebook: "https://www.facebook.com/rhodlenard.delasnieves",
+    instagram: "https://www.instagram.com/rhodlenard/?hl=en",
+    linkedin: "https://www.linkedin.com/in/rhod-lenard-villanueva-92878a33b/",
+    github: "https://github.com/RhodLenard",
+  },
   year: 2026,
 } as const;
 
@@ -55,7 +60,12 @@ export const navigation = [
 ] as const;
 
 export const craftTags = [
+  "HTML",
+  "CSS",
+  "JavaScript",
   "React",
+  "React Native",
+  "Expo",
   "Next.js",
   "TypeScript",
   "Tailwind CSS",
