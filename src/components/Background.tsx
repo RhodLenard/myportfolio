@@ -27,8 +27,11 @@ export function Background() {
     let height = 0
     let frame = 0
     let animationFrame = 0
+    let lastDrawTime = 0
     let resizeFrame = 0
     let touchReleaseTimer = 0
+    let scrollIdleTimer = 0
+    let mobileScrolling = false
     let touchActive = false
     let nodes: ConstellationNode[] = []
 
@@ -96,6 +99,9 @@ export function Background() {
     const handleTouchMove = (event: TouchEvent) => {
       const touch = event.touches[0]
       if (!touch) return
+      mobileScrolling = true
+      window.clearTimeout(scrollIdleTimer)
+      scrollIdleTimer = window.setTimeout(() => { mobileScrolling = false }, 120)
       window.clearTimeout(touchReleaseTimer)
       touchActive = true
       updatePointer(touch.clientX, touch.clientY)
@@ -111,6 +117,13 @@ export function Background() {
       touchActive = false
       window.clearTimeout(touchReleaseTimer)
       touchReleaseTimer = window.setTimeout(resetPointer, 450)
+    }
+
+    const handleScroll = () => {
+      if (!coarsePointer) return
+      mobileScrolling = true
+      window.clearTimeout(scrollIdleTimer)
+      scrollIdleTimer = window.setTimeout(() => { mobileScrolling = false }, 120)
     }
 
     const handlePointerLeave = () => {
@@ -132,7 +145,13 @@ export function Background() {
       })
     }
 
-    const draw = () => {
+    const draw = (time = 0) => {
+      if (coarsePointer && mobileScrolling && time - lastDrawTime < 32) {
+        animationFrame = window.requestAnimationFrame(draw)
+        return
+      }
+      lastDrawTime = time
+
       if (frame++ % 40 === 0) {
         const styles = getComputedStyle(root)
         colors.accent = styles.getPropertyValue('--accent').trim() || colors.accent
@@ -202,6 +221,7 @@ export function Background() {
     window.addEventListener('touchmove', handleTouchMove, { passive: true })
     window.addEventListener('touchend', handleTouchEnd, { passive: true })
     window.addEventListener('touchcancel', handleTouchEnd, { passive: true })
+    window.addEventListener('scroll', handleScroll, { passive: true })
     document.documentElement.addEventListener('pointerleave', handlePointerLeave)
     draw()
 
@@ -209,6 +229,7 @@ export function Background() {
       window.cancelAnimationFrame(animationFrame)
       window.cancelAnimationFrame(resizeFrame)
       window.clearTimeout(touchReleaseTimer)
+      window.clearTimeout(scrollIdleTimer)
       window.removeEventListener('resize', handleResize)
       window.removeEventListener('pointerdown', handlePointerDown)
       window.removeEventListener('pointermove', handlePointerMove)
@@ -218,6 +239,7 @@ export function Background() {
       window.removeEventListener('touchmove', handleTouchMove)
       window.removeEventListener('touchend', handleTouchEnd)
       window.removeEventListener('touchcancel', handleTouchEnd)
+      window.removeEventListener('scroll', handleScroll)
       document.documentElement.removeEventListener('pointerleave', handlePointerLeave)
     }
   }, [])
