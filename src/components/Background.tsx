@@ -19,6 +19,7 @@ export function Background() {
     if (reducedMotion) return
 
     const root = document.documentElement
+    const coarsePointer = window.matchMedia('(pointer: coarse)').matches
     const pointer = { x: -999, y: -999 }
     const smoothPointer = { x: -999, y: -999 }
     const colors = { accent: '#d97757', muted: '#a3a29b' }
@@ -26,10 +27,15 @@ export function Background() {
     let height = 0
     let frame = 0
     let animationFrame = 0
+    let resizeFrame = 0
+    let touchReleaseTimer = 0
+    let touchActive = false
     let nodes: ConstellationNode[] = []
 
     const createNodes = () => {
-      const count = Math.min(110, Math.round((width * height) / 16000))
+      const count = coarsePointer
+        ? Math.min(54, Math.round((width * height) / 22000))
+        : Math.min(110, Math.round((width * height) / 16000))
       nodes = Array.from({ length: count }, () => ({
         x: Math.random() * width,
         y: Math.random() * height,
@@ -39,7 +45,7 @@ export function Background() {
     }
 
     const resize = () => {
-      const pixelRatio = window.devicePixelRatio || 1
+      const pixelRatio = Math.min(window.devicePixelRatio || 1, 2)
       width = window.innerWidth
       height = window.innerHeight
       canvas.width = width * pixelRatio
@@ -48,14 +54,54 @@ export function Background() {
       createNodes()
     }
 
-    const handlePointerMove = (event: PointerEvent) => {
+    const updatePointer = (event: PointerEvent) => {
       pointer.x = event.clientX
       pointer.y = event.clientY
     }
 
-    const handlePointerLeave = () => {
+    const handlePointerDown = (event: PointerEvent) => {
+      if (event.pointerType === 'mouse') return
+      window.clearTimeout(touchReleaseTimer)
+      touchActive = true
+      updatePointer(event)
+    }
+
+    const handlePointerMove = (event: PointerEvent) => {
+      if (event.pointerType !== 'mouse' && !touchActive) return
+      updatePointer(event)
+    }
+
+    const resetPointer = () => {
       pointer.x = -999
       pointer.y = -999
+      smoothPointer.x = -999
+      smoothPointer.y = -999
+    }
+
+    const handlePointerEnd = (event: PointerEvent) => {
+      if (event.pointerType === 'mouse') return
+      touchActive = false
+      window.clearTimeout(touchReleaseTimer)
+      touchReleaseTimer = window.setTimeout(resetPointer, 450)
+    }
+
+    const handlePointerLeave = () => {
+      touchActive = false
+      window.clearTimeout(touchReleaseTimer)
+      resetPointer()
+    }
+
+    const handleResize = () => {
+      window.cancelAnimationFrame(resizeFrame)
+      resizeFrame = window.requestAnimationFrame(() => {
+        const nextWidth = window.innerWidth
+        const nextHeight = window.innerHeight
+        const browserChromeOnly = coarsePointer
+          && nextWidth === width
+          && Math.abs(nextHeight - height) < 180
+
+        if (!browserChromeOnly) resize()
+      })
     }
 
     const draw = () => {
@@ -119,15 +165,23 @@ export function Background() {
     }
 
     resize()
-    window.addEventListener('resize', resize)
+    window.addEventListener('resize', handleResize)
+    window.addEventListener('pointerdown', handlePointerDown, { passive: true })
     window.addEventListener('pointermove', handlePointerMove, { passive: true })
+    window.addEventListener('pointerup', handlePointerEnd, { passive: true })
+    window.addEventListener('pointercancel', handlePointerEnd, { passive: true })
     document.documentElement.addEventListener('pointerleave', handlePointerLeave)
     draw()
 
     return () => {
       window.cancelAnimationFrame(animationFrame)
-      window.removeEventListener('resize', resize)
+      window.cancelAnimationFrame(resizeFrame)
+      window.clearTimeout(touchReleaseTimer)
+      window.removeEventListener('resize', handleResize)
+      window.removeEventListener('pointerdown', handlePointerDown)
       window.removeEventListener('pointermove', handlePointerMove)
+      window.removeEventListener('pointerup', handlePointerEnd)
+      window.removeEventListener('pointercancel', handlePointerEnd)
       document.documentElement.removeEventListener('pointerleave', handlePointerLeave)
     }
   }, [])
