@@ -20,6 +20,7 @@ export function MotionPolish() {
 
   useEffect(() => {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const coarsePointer = window.matchMedia('(pointer: coarse)').matches
     let scrollFrame = 0
 
     const updateProgress = () => {
@@ -54,7 +55,10 @@ export function MotionPolish() {
         revealObserver.unobserve(element)
         element.classList.add('motion-reveal--visible')
       })
-    }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' })
+    }, {
+      threshold: coarsePointer ? 0.01 : 0.12,
+      rootMargin: coarsePointer ? '0px 0px 20% 0px' : '0px 0px -6% 0px',
+    })
 
     revealElements.forEach((element) => {
       const siblings = element.parentElement ? Array.from(element.parentElement.children) : []

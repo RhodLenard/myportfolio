@@ -54,21 +54,21 @@ export function Background() {
       createNodes()
     }
 
-    const updatePointer = (event: PointerEvent) => {
-      pointer.x = event.clientX
-      pointer.y = event.clientY
+    const updatePointer = (clientX: number, clientY: number) => {
+      pointer.x = clientX
+      pointer.y = clientY
     }
 
     const handlePointerDown = (event: PointerEvent) => {
       if (event.pointerType === 'mouse') return
       window.clearTimeout(touchReleaseTimer)
       touchActive = true
-      updatePointer(event)
+      updatePointer(event.clientX, event.clientY)
     }
 
     const handlePointerMove = (event: PointerEvent) => {
       if (event.pointerType !== 'mouse' && !touchActive) return
-      updatePointer(event)
+      updatePointer(event.clientX, event.clientY)
     }
 
     const resetPointer = () => {
@@ -79,7 +79,35 @@ export function Background() {
     }
 
     const handlePointerEnd = (event: PointerEvent) => {
-      if (event.pointerType === 'mouse') return
+      if (event.pointerType === 'mouse' || event.pointerType === 'touch') return
+      touchActive = false
+      window.clearTimeout(touchReleaseTimer)
+      touchReleaseTimer = window.setTimeout(resetPointer, 450)
+    }
+
+    const handleTouchStart = (event: TouchEvent) => {
+      const touch = event.touches[0]
+      if (!touch) return
+      window.clearTimeout(touchReleaseTimer)
+      touchActive = true
+      updatePointer(touch.clientX, touch.clientY)
+    }
+
+    const handleTouchMove = (event: TouchEvent) => {
+      const touch = event.touches[0]
+      if (!touch) return
+      window.clearTimeout(touchReleaseTimer)
+      touchActive = true
+      updatePointer(touch.clientX, touch.clientY)
+    }
+
+    const handleTouchEnd = (event: TouchEvent) => {
+      const remainingTouch = event.touches[0]
+      if (remainingTouch) {
+        updatePointer(remainingTouch.clientX, remainingTouch.clientY)
+        return
+      }
+
       touchActive = false
       window.clearTimeout(touchReleaseTimer)
       touchReleaseTimer = window.setTimeout(resetPointer, 450)
@@ -170,6 +198,10 @@ export function Background() {
     window.addEventListener('pointermove', handlePointerMove, { passive: true })
     window.addEventListener('pointerup', handlePointerEnd, { passive: true })
     window.addEventListener('pointercancel', handlePointerEnd, { passive: true })
+    window.addEventListener('touchstart', handleTouchStart, { passive: true })
+    window.addEventListener('touchmove', handleTouchMove, { passive: true })
+    window.addEventListener('touchend', handleTouchEnd, { passive: true })
+    window.addEventListener('touchcancel', handleTouchEnd, { passive: true })
     document.documentElement.addEventListener('pointerleave', handlePointerLeave)
     draw()
 
@@ -182,6 +214,10 @@ export function Background() {
       window.removeEventListener('pointermove', handlePointerMove)
       window.removeEventListener('pointerup', handlePointerEnd)
       window.removeEventListener('pointercancel', handlePointerEnd)
+      window.removeEventListener('touchstart', handleTouchStart)
+      window.removeEventListener('touchmove', handleTouchMove)
+      window.removeEventListener('touchend', handleTouchEnd)
+      window.removeEventListener('touchcancel', handleTouchEnd)
       document.documentElement.removeEventListener('pointerleave', handlePointerLeave)
     }
   }, [])
